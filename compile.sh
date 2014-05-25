@@ -28,17 +28,24 @@ find . -name ".DS_Store" -delete
 
 osacompile -o "$APP" "$ORIGINAL"
 ./set_icon.rb "$APP" Icon.icns
-plutil -insert CFBundleIdentifier -string "com.fd-imaging.${PKG,,}" "$APP"/Contents/Info.plist
-plutil -insert CFBundleShortVersionString -string "$VERSION" "$APP"/Contents/Info.plist
-plutil -insert LSApplicationCategoryType -string "public.app-category.productivity" "$APP"/Contents/Info.plist
-plutil -insert LSMinimumSystemVersion -string "10.6.0" "$APP"/Contents/Info.plist
+cp Icon.icns "$APP"/Contents/Resources/applet.icns
+
+plutil -insert  CFBundleIdentifier -string "com.fd-imaging.${NAME,,}" "$APP"/Contents/Info.plist
+plutil -insert  CFBundleShortVersionString -string "$VERSION" "$APP"/Contents/Info.plist
+plutil -insert  LSApplicationCategoryType -string "public.app-category.productivity" "$APP"/Contents/Info.plist
+plutil -insert  LSMinimumSystemVersion -string "10.6.0" "$APP"/Contents/Info.plist
+plutil -replace CFBundleIconFile -string "applet.icns" "$APP"/Contents/Info.plist
+
 # sign
+echo
 codesign \
 	--force --verify --verbose \
 	--sign "3rd Party Mac Developer Application: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)" \
 	"$APP"
 # check
+echo
 codesign -vvv -d "$APP"
+echo
 
 productbuild \
     --component "$APP" /Applications \
