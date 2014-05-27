@@ -36,15 +36,34 @@ plutil -insert  LSApplicationCategoryType -string "public.app-category.productiv
 plutil -insert  LSMinimumSystemVersion -string "10.6.0" "$APP"/Contents/Info.plist
 plutil -replace CFBundleIconFile -string "applet.icns" "$APP"/Contents/Info.plist
 
+
+SANDBOX=$(cat <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+</dict>
+</plist>
+EOF
+)
+
+echo "$SANDBOX" > tmp/sandbox.plist
+
+
 # sign
 echo
 codesign \
+	--entitlements tmp/sandbox.plist \
 	--force --verify --verbose \
 	--sign "3rd Party Mac Developer Application: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)" \
 	"$APP"
 # check
 echo
 codesign -vvv -d "$APP"
+echo
+codesign --display --entitlements - "$APP"
 echo
 
 productbuild \
