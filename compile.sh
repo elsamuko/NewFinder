@@ -29,7 +29,7 @@ mkdir tmp
 find . -name ".DS_Store" -delete
 
 osacompile -o "$APP" "$ORIGINAL"
-./set_icon.rb "$APP" Icon.icns
+
 cp Icon.icns "$APP"/Contents/Resources/applet.icns
 
 plutil -insert  CFBundleIdentifier -string "com.fd-imaging.${NAME,,}" "$APP"/Contents/Info.plist
