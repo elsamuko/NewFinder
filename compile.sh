@@ -18,8 +18,8 @@ NAME="${ORIGINAL%.scpt}"
 APP="$NAME.app"
 PKG="$NAME.pkg"
 VERSION=0.2.0
-KEY_CODESIGN="Developer ID Application: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)"
-KEY_PACKAGE="Developer ID Installer: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)"
+KEY_CODESIGN="3rd Party Mac Developer Application: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)"
+KEY_PACKAGE="3rd Party Mac Developer Installer: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)"
 
 # cleanup old run
 rm -rf tmp
@@ -35,29 +35,12 @@ cp Icon.icns "$APP"/Contents/Resources/applet.icns
 plutil -insert  CFBundleIdentifier -string "com.fd-imaging.${NAME,,}" "$APP"/Contents/Info.plist
 plutil -insert  CFBundleShortVersionString -string "$VERSION" "$APP"/Contents/Info.plist
 plutil -insert  LSApplicationCategoryType -string "public.app-category.productivity" "$APP"/Contents/Info.plist
-plutil -insert  LSMinimumSystemVersion -string "10.6.0" "$APP"/Contents/Info.plist
+plutil -insert  LSMinimumSystemVersion -string "10.10.0" "$APP"/Contents/Info.plist
 plutil -replace CFBundleIconFile -string "applet.icns" "$APP"/Contents/Info.plist
-
-
-SANDBOX=$(cat <<EOF
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-	<key>com.apple.security.app-sandbox</key>
-	<true/>
-</dict>
-</plist>
-EOF
-)
-
-echo "$SANDBOX" > tmp/sandbox.plist
-
 
 # sign
 echo
 codesign \
-	--entitlements tmp/sandbox.plist \
 	--force --verify --verbose \
 	--sign "$KEY_CODESIGN" \
 	"$APP"
@@ -73,3 +56,11 @@ productbuild \
     --sign "$KEY_PACKAGE" \
     --product "$APP/Contents/Info.plist" \
     "$PKG"
+
+# delete app, else installer will relocate
+rm -rf "$APP"
+
+echo
+echo "Test with"
+echo "    sudo installer -pkg $PKG -target /"
+echo
