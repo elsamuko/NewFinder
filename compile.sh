@@ -18,6 +18,8 @@ NAME="${ORIGINAL%.scpt}"
 APP="$NAME.app"
 PKG="$NAME.pkg"
 VERSION=0.2.0
+KEY_CODESIGN="Developer ID Application: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)"
+KEY_PACKAGE="Developer ID Installer: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)"
 
 # cleanup old run
 rm -rf tmp
@@ -57,7 +59,7 @@ echo
 codesign \
 	--entitlements tmp/sandbox.plist \
 	--force --verify --verbose \
-	--sign "3rd Party Mac Developer Application: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)" \
+	--sign "$KEY_CODESIGN" \
 	"$APP"
 # check
 echo
@@ -68,6 +70,6 @@ echo
 
 productbuild \
     --component "$APP" /Applications \
-    --sign "3rd Party Mac Developer Installer: FD Imaging UG (haftungsbeschraenkt) (H63858HN93)" \
+    --sign "$KEY_PACKAGE" \
     --product "$APP/Contents/Info.plist" \
     "$PKG"
