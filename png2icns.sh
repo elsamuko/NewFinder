@@ -10,8 +10,8 @@ ICONSET=/tmp/MyIcon.iconset
 ORIGINAL="$1"
 ICON="${ORIGINAL%.png}.icns"
 
- WIDTH=$(sips -g pixelWidth  "$ORIGINAL" | grep -Po "(?<=pixelWidth: ).*")
-HEIGHT=$(sips -g pixelHeight "$ORIGINAL" | grep -Po "(?<=pixelHeight: ).*")
+ WIDTH=$(sips -g pixelWidth  "$ORIGINAL" | ggrep -Po "(?<=pixelWidth: ).*")
+HEIGHT=$(sips -g pixelHeight "$ORIGINAL" | ggrep -Po "(?<=pixelHeight: ).*")
 
 if [ $WIDTH -ne 1024 ] || [ $HEIGHT -ne 1024 ]
 then
